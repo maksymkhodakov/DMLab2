@@ -1,4 +1,5 @@
 # Import Libraries
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,6 +9,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
+
+# Ensure the 'images' directory exists
+if not os.path.exists('images'):
+    os.makedirs('images')
 
 # 1. Data Preprocessing
 
@@ -61,49 +66,55 @@ print(data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].describe())
 # Histograms
 data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].hist(bins=10, figsize=(10,7))
 plt.tight_layout()
+plt.savefig('images/histograms.png')  # Save the histograms
 plt.show()
 
 # Pairplot
-sns.pairplot(data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']], diag_kind='kde')
+pairplot_fig = sns.pairplot(data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']], diag_kind='kde')
+pairplot_fig.savefig('images/pairplot.png')  # Save the pairplot
 plt.show()
 
 # Correlation Matrix
+plt.figure(figsize=(8,6))
 corr = data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].corr()
 sns.heatmap(corr, annot=True, cmap='coolwarm')
 plt.title('Correlation Matrix')
+plt.savefig('images/correlation_matrix.png')  # Save the correlation matrix
 plt.show()
 
 # 3. Implementing K-Means Clustering
 
 # a. Choosing the Number of Clusters (k) - Elbow Method
 wcss = []
-K = range(1, 11)
-for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42)
+K_range = range(1, 11)
+for k_val in K_range:
+    kmeans = KMeans(n_clusters=k_val, random_state=42)
     kmeans.fit(X_scaled)
     wcss.append(kmeans.inertia_)
 
 plt.figure(figsize=(8,5))
-plt.plot(K, wcss, 'bo-')
+plt.plot(K_range, wcss, 'bo-')
 plt.xlabel('Number of Clusters (k)')
 plt.ylabel('WCSS')
 plt.title('Elbow Method for Optimal k')
+plt.savefig('images/elbow_method.png')  # Save the elbow method plot
 plt.show()
 
 # a. Choosing the Number of Clusters (k) - Silhouette Analysis
 silhouette_scores = []
-K = range(2, 11)
-for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42)
+K_silhouette = range(2, 11)
+for k_val in K_silhouette:
+    kmeans = KMeans(n_clusters=k_val, random_state=42)
     cluster_labels = kmeans.fit_predict(X_scaled)
     score = silhouette_score(X_scaled, cluster_labels)
     silhouette_scores.append(score)
 
 plt.figure(figsize=(8,5))
-plt.plot(K, silhouette_scores, 'bo-')
+plt.plot(K_silhouette, silhouette_scores, 'bo-')
 plt.xlabel('Number of Clusters (k)')
 plt.ylabel('Silhouette Score')
 plt.title('Silhouette Analysis for Optimal k')
+plt.savefig('images/silhouette_analysis.png')  # Save the silhouette analysis plot
 plt.show()
 
 # Based on Elbow and Silhouette, choose k=5
@@ -137,8 +148,9 @@ pca_df['Cluster'] = data['Cluster']
 
 # b. Scatter Plot of Clusters
 plt.figure(figsize=(8,6))
-sns.scatterplot(x='PC1', y='PC2', hue='Cluster', data=pca_df, palette='Set1', alpha=0.6)
+scatter_fig = sns.scatterplot(x='PC1', y='PC2', hue='Cluster', data=pca_df, palette='Set1', alpha=0.6)
 plt.title('Customer Segments (PCA Reduced)')
+plt.savefig('images/pca_clusters.png')  # Save the PCA scatter plot
 plt.show()
 
 # c. Cluster Centroids in Original Scale
@@ -149,20 +161,26 @@ print(centroid_df)
 
 # d. Additional Visualizations
 
-# Age Distribution by Cluster
+# Boxplot for Age by Cluster
 plt.figure(figsize=(8,6))
 sns.boxplot(x='Cluster', y='Age', hue='Cluster', data=data, palette='Set2')
 plt.title('Age Distribution by Cluster')
+plt.legend([],[], frameon=False)  # Disable legend
+plt.savefig('images/boxplot_age.png')  # Save the boxplot
 plt.show()
 
-# Annual Income Distribution by Cluster
+# Boxplot for Annual Income by Cluster
 plt.figure(figsize=(8,6))
 sns.boxplot(x='Cluster', y='Annual Income (k$)', hue='Cluster', data=data, palette='Set2')
 plt.title('Annual Income Distribution by Cluster')
+plt.legend([],[], frameon=False)  # Disable legend
+plt.savefig('images/boxplot_income.png')  # Save the boxplot
 plt.show()
 
-# Spending Score Distribution by Cluster
+# Boxplot for Spending Score by Cluster
 plt.figure(figsize=(8,6))
 sns.boxplot(x='Cluster', y='Spending Score (1-100)', hue='Cluster', data=data, palette='Set2')
 plt.title('Spending Score Distribution by Cluster')
+plt.legend([],[], frameon=False)  # Disable legend
+plt.savefig('images/boxplot_spending.png')  # Save the boxplot
 plt.show()
