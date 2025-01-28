@@ -1,5 +1,5 @@
 # Import Libraries
-import os
+import os  # Added for directory operations
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -63,10 +63,33 @@ X_scaled = scaler.fit_transform(X)
 print("\nDescriptive Statistics:")
 print(data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].describe())
 
-# Histograms
-data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].hist(bins=10, figsize=(10,7))
-plt.tight_layout()
-plt.savefig('images/histograms.png')  # Save the histograms
+# Separate Histograms
+
+# Histogram for Age
+plt.figure(figsize=(8,6))
+sns.histplot(data['Age'], bins=10, kde=True, color='blue')
+plt.title('Гістограма Віку')
+plt.xlabel('Вік')
+plt.ylabel('Частота')
+plt.savefig('images/hist_age.png')  # Save the Age histogram
+plt.show()
+
+# Histogram for Annual Income
+plt.figure(figsize=(8,6))
+sns.histplot(data['Annual Income (k$)'], bins=10, kde=True, color='green')
+plt.title('Гістограма Річного Доходу')
+plt.xlabel('Річний Дохід (k$)')
+plt.ylabel('Частота')
+plt.savefig('images/hist_income.png')  # Save the Annual Income histogram
+plt.show()
+
+# Histogram for Spending Score
+plt.figure(figsize=(8,6))
+sns.histplot(data['Spending Score (1-100)'], bins=10, kde=True, color='red')
+plt.title('Гістограма Рейтингу Витрат')
+plt.xlabel('Рейтинг Витрат (1-100)')
+plt.ylabel('Частота')
+plt.savefig('images/hist_spending.png')  # Save the Spending Score histogram
 plt.show()
 
 # Pairplot
